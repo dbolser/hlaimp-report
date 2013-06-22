@@ -4,10 +4,14 @@ if(!interactive()){
 }
 
 ## List of directories containing unzipped HLAIMP results
-dirs <- c("Dan", "Nao")
-dirs <- c("Ash", "Dan", "Mum", "Dad")
-dirs <- c("Dan", "Sam", "Sbm")
+dirs <- c("Dan", "Nao", "Mum", "Dad")
+#dirs <- c("Ash", "Dan", "Mum", "Dad")
 
+## Sammi
+#dirs <- c("Dan", "Sam", "Sbm")
+
+## All
+#dirs <- c("Ash", "Dan", "Mum", "Dad", "Sam", "Sbm")
 
 
 ## Data taken from the files in those directories
@@ -43,7 +47,10 @@ length(data)
 for(name in names(data)){
   print(name)
   
-  ## Give each individual values for each possible genotype
+  ## Debugging
+  ##name <- "PP_DRB5.txt"
+  
+  ## Give each person a value for all possible genotypes
   all.names <-
     unique(unlist(lapply(data[[name]], colnames)))
   
@@ -61,7 +68,7 @@ for(name in names(data)){
   
   ## Filter small values
   fuck.me.filt <-
-    fuck.me[, apply(fuck.me, 2, max) > 0.1]
+    fuck.me[, c(apply(fuck.me, 2, max) > 0.1), drop=F]
   
   ## Make pretty lables (ARRRRRRRRRRR!)
   x <-
@@ -82,19 +89,22 @@ for(name in names(data)){
   
   ## HaRRRRrr
   x <-
-    sub('_', '\n', x)
-
+    sub('_', '/\n', x)
+  x <-
+    paste(x, '')
+  
   y <- 
     paste('HLA', substr(name, 4, nchar(name)-4), sep="-")
   
   barplot(as.matrix(fuck.me.filt),
           main=y,
-          beside=TRUE,
+          beside=TRUE, ylim=c(0,1),
           ylab="Probability of the given HLA genotype",
           legend=TRUE, col=c(2:9)[1:length(dirs)],
           las=3,
           names=x,
-          cex.names=2
+          cex.main=2.5,
+          cex.names=1.5
           )
   
 }

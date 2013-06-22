@@ -1,0 +1,17 @@
+Tool for generating graphical report from the output of HLA*IMP:2 [1].
+
+As an asside, I re-formatted my 23andMe results for uploading to IMP
+using this Perl one-liner:
+
+perl -ane '
+  $x{$F[0]}=$F[3] if
+    $F[0]=~/^rs\d+$/ &&
+    $F[1] == 6 &&
+    $F[3]=~/^[ATCG]{2}$/;
+  END{
+    print join(" ", "IndividualID", sort keys %x), "\n";
+    print join(" ", "NM0",
+      map{ substr( $x{$_}, 1, 0, "/" ); $x{$_} } sort keys %x), "\n"}
+
+' genome_X_Y_Full_YYYYMMDDHHMMSS.txt
+

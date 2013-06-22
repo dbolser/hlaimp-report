@@ -6,6 +6,9 @@ if(!interactive()){
 ## List of directories containing unzipped HLAIMP results
 dirs <- c("Dan", "Nao")
 dirs <- c("Ash", "Dan", "Mum", "Dad")
+dirs <- c("Dan", "Sam", "Sbm")
+
+
 
 ## Data taken from the files in those directories
 data <- list()
@@ -37,15 +40,15 @@ length(data)
 
 
 ## Plot it
-for(n in names(data)){
-  print(n)
-
+for(name in names(data)){
+  print(name)
+  
   ## Give each individual values for each possible genotype
   all.names <-
-    unique(unlist(lapply(data[[n]], colnames)))
+    unique(unlist(lapply(data[[name]], colnames)))
   
-  data[[n]] <-
-    lapply(data[[n]], function(x){
+  data[[name]] <-
+    lapply(data[[name]], function(x){
       m <- setdiff(all.names, names(x))
       if(length(m))
         x[,m] <- 0
@@ -54,26 +57,44 @@ for(n in names(data)){
 
   ## Merge data
   fuck.me <- 
-    do.call("rbind", data[[n]])
-
+    do.call("rbind", data[[name]])
   
-  ## Make pretty lables
-  all.names <-
-    substr(all.names, 2, 10)
-  all.names <-
-    sub('_', '\n', all.names)
-
-  main <-
-    substring(n, 4,
-              char(n)
-              length(n)
-              )
+  ## Filter small values
+  fuck.me.filt <-
+    fuck.me[, apply(fuck.me, 2, max) > 0.1]
   
-  barplot(as.matrix(fuck.me),
-          main=n,
+  ## Make pretty lables (ARRRRRRRRRRR!)
+  x <-
+    colnames(fuck.me.filt)
+  
+  x <-
+    substr(x, 2, 10)
+  
+  ## HaRRRRrr
+  n <- 8
+  x <- paste(substr(x, 1, n-1), ":",
+             substr(x, n, nchar(x)), sep = "")
+  
+  ## HaRRRRrr
+  n <- 3
+  x <- paste(substr(x, 1, n-1), ":",
+             substr(x, n, nchar(x)), sep = "")
+  
+  ## HaRRRRrr
+  x <-
+    sub('_', '\n', x)
+
+  y <- 
+    paste('HLA', substr(name, 4, nchar(name)-4), sep="-")
+  
+  barplot(as.matrix(fuck.me.filt),
+          main=y,
           beside=TRUE,
+          ylab="Probability of the given HLA genotype",
           legend=TRUE, col=c(2:9)[1:length(dirs)],
           las=3,
-          names=all.names)
+          names=x,
+          cex.names=2
+          )
   
 }
